@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   has_many :attempts
+  validates_inclusion_of :word, in: Dictionary.popular
 
   def current_attempt
     attempts.new(

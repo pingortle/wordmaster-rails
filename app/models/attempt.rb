@@ -17,6 +17,12 @@ class Attempt < ApplicationRecord
     default: -> { [] }
   )
 
+  validates_inclusion_of :guess, in: Dictionary.popular
+
+  def guess
+    letters.map(&:value).join("")
+  end
+
   def letters_attributes
     letters.map(&:attributes)
   end

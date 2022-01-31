@@ -1,0 +1,3 @@
+[submodule "vendor/github/dolph/dictionary"]
+	path = vendor/github/dolph/dictionary
+	url = https://github.com/dolph/dictionary.git
