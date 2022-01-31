@@ -1,0 +1,9 @@
+<h1>Hello Wordsmiths!</h1>
+
+<%= button_to "New Game", action: :create %>
+
+<ol>
+  <% @games.each do |game| %>
+    <li><%= link_to game.created_at.in_time_zone("Central Time (US & Canada)").to_fs(:short), game %></li>
+  <% end %>
+</ol>
