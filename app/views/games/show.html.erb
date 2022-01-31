@@ -1,26 +1,18 @@
 <%
-def evaluate(letter, index)
-  if @game.word[index] == letter.value
-    :correct
-  elsif @game.word.include?(letter.value)
-    :correct_with_incorrect_location
-  else
-    :incorrect
-  end
-end
-
-def style_attempt_background_color(letter, index)
+def score_to_css(score)
   guess_to_css = {
     correct: "lightgreen",
+    correct_with_incorrect_location: "lightyellow",
     incorrect: "revert",
-    correct_with_incorrect_location: "lightyellow"
-  }
-  guess_to_css[evaluate(letter, index)]
+    unknown: "purple"
+  }.with_indifferent_access
+  guess_to_css.fetch(score) { "red" }
 end
 %>
+
 <% @game.attempts.each do |attempt| %>
-  <% attempt.letters.each_with_index do |letter, index| %>
-    <input type=text value="<%= letter.value %>" style="background-color: <%= style_attempt_background_color(letter, index) %>" autocomplete=nope size=1 maxlength=1 minlength=1 disabled>
+  <% attempt.letters.each do |letter| %>
+    <input type=text value="<%= letter.value %>" style="background-color: <%= score_to_css(letter.score) %>" autocomplete=nope size=1 maxlength=1 minlength=1 disabled>
   <% end %>
   <br>
 <% end %>

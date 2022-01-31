@@ -1,5 +1,6 @@
 class Attempt < ApplicationRecord
   belongs_to :game
+  delegate :word, to: :game
 
   attribute(
     :letters,
@@ -8,8 +9,8 @@ class Attempt < ApplicationRecord
         ActiveRecord::Type::String.new
       ),
       in: {
-        String => ->(value) { value.each_char.map { |char| Letter.new(value: char.presence) } },
-        Array => ->(value) { value.each.map { |char| Letter.new(value: char.presence) } }
+        String => ->(value) { value.each_char.with_index.map { |char, index| Letter.new(value: char.presence, index: index) } },
+        Array => ->(value) { value.each_with_index.map { |char, index| Letter.new(value: char.presence, index: index) } }
       },
       out: ->(letters) { letters.map(&:value) },
     ),
@@ -29,9 +30,54 @@ class Attempt < ApplicationRecord
     end
   end
 
+  def score!
+    letters.zip(word.each_char) do |letter, answer|
+      if letter.value == answer
+        letter.correct!
+      end
+    end
+
+    letters.filter(&:unknown?).each do |candidate|
+      word.each_char.with_index do |answer, index|
+        if candidate.value == answer && !letters.map(&:correct_index).include?(index)
+          candidate.correct_with_incorrect_location!(index: index)
+        end
+      end
+    end
+
+    letters.filter(&:unknown?).each(&:incorrect!)
+  end
+
   class Letter
     include ActiveModel::Model
-    attr_accessor :value
+    include ActiveModel::Attributes
+
+    attribute :value, :string
+    attribute :score, :string, default: :unknown
+    attribute :index, :integer
+    attribute :correct_index, :integer
+
+    def correct!
+      self.score = :correct
+      self.correct_index = index
+    end
+
+    def correct_with_incorrect_location!(index:)
+      self.score = :correct_with_incorrect_location
+      self.correct_index = index
+    end
+
+    def incorrect!
+      self.score = :incorrect
+    end
+
+    def unknown?
+      score.inquiry.unknown?
+    end
+
+    def correct?
+      score.inquiry.correct?
+    end
 
     def attributes
       {"value" => value}

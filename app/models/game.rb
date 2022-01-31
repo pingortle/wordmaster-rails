@@ -16,4 +16,8 @@ class Game < ApplicationRecord
   def remaining_attempt_count
     [0, attempt_limit - attempts.length - 1].max
   end
+
+  def score!
+    attempts.each(&:score!)
+  end
 end
