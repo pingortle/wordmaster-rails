@@ -9,7 +9,11 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.create!(word: "hello")
+    @game = Game.with_random_word.create!(game_params)
     redirect_to @game
+  end
+
+  def game_params
+    params.fetch(:game) { ActionController::Parameters.new }.permit(:word, :attempt_limit)
   end
 end

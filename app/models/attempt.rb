@@ -1,6 +1,6 @@
 class Attempt < ApplicationRecord
   belongs_to :game
-  delegate :word, to: :game
+  delegate :word, :attempts, :attempt_limit, to: :game
 
   attribute(
     :letters,
@@ -18,6 +18,7 @@ class Attempt < ApplicationRecord
   )
 
   validates_inclusion_of :guess, in: Dictionary.popular
+  validates_length_of :attempts, maximum: ->(attempt) { attempt.attempt_limit }
 
   def guess
     letters.map(&:value).join("")

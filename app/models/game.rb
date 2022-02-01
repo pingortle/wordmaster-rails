@@ -21,4 +21,8 @@ class Game < ApplicationRecord
   def score!
     attempts.each(&:score!)
   end
+
+  def self.with_random_word
+    create_with(word: Dictionary.popular_of_length(5).sample)
+  end
 end

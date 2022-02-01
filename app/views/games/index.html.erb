@@ -1,6 +1,18 @@
 <h1>Hello Wordsmiths!</h1>
 
-<%= button_to "New Game", action: :create %>
+<%= form_with model: Game.new do |form| %>
+  <%= form.label :word %>
+  <br>
+  <%= form.text_field :word %>
+  <br>
+  <%= form.label :attempt_limit %>
+  <br>
+  <%= form.number_field :attempt_limit %>
+  <br>
+  <%= form.submit %>
+<% end %>
+
+<%= button_to "Surprise Me", action: :create %>
 
 <ol>
   <% @games.each do |game| %>
