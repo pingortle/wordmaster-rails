@@ -68,6 +68,10 @@ class Attempt < ApplicationRecord
     attribute :index, :integer
     attribute :correct_index, :integer
 
+    def value=(value)
+      super(value.try { downcase.chomp })
+    end
+
     def correct!
       self.score = :correct
       self.correct_index = index
