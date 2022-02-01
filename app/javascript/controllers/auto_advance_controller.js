@@ -8,19 +8,20 @@ export default class extends Controller {
   }
 
   keydown (event) {
-    this.lastValue = event.target.value || ''
-  }
-
-  keyup (event) {
+    const lastValue = event.target.value || ''
     const current = event.target
+
     if (event.keyCode === BACKSPACE) {
-      if (this.lastValue.length === 0) {
+      if (lastValue.length === 0) {
+        event.preventDefault()
         const previous = this.previousInput(current)
         previous.value = ''
         previous.focus()
         console.log(current.value, previous)
       }
     } else if (event.key.toLowerCase().match(/^[a-z]$/)) {
+      event.preventDefault()
+      current.value = event.key
       this.nextInput(current).focus()
     }
   }
