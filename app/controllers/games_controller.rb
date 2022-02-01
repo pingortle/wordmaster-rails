@@ -13,7 +13,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.fetch(:game) { ActionController::Parameters.new }.permit(:word, :attempt_limit)
+    params.fetch(:game, {}).permit(:word, :attempt_limit)
   end
 
   def global_params
