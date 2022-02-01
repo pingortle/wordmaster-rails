@@ -20,6 +20,10 @@ class Attempt < ApplicationRecord
   validates_inclusion_of :guess, in: Dictionary.popular
   validates_length_of :attempts, maximum: ->(attempt) { attempt.attempt_limit }
 
+  def correct?
+    letters.all?(&:correct?)
+  end
+
   def guess
     letters.map(&:value).join("")
   end

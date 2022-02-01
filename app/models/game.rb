@@ -15,14 +15,33 @@ class Game < ApplicationRecord
   end
 
   def remaining_attempt_count
-    [0, attempt_limit - attempts.length - 1].max
+    [0, attempt_limit - attempts.length].max
+  end
+
+  def scored
+    score!
+    self
   end
 
   def score!
     attempts.each(&:score!)
   end
 
-  def self.with_random_word
-    create_with(word: Dictionary.popular_of_length(5).sample)
+  def incomplete?
+    status == :incomplete
+  end
+
+  def status
+    if attempts.last&.correct?
+      :won
+    elsif remaining_attempt_count == 0
+      :lost
+    else
+      :incomplete
+    end
+  end
+
+  def self.with_random_word(length: 5)
+    create_with(word: Dictionary.popular_of_length(length).sample)
   end
 end

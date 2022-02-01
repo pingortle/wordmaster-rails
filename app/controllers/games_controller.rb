@@ -4,16 +4,23 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
-    @game.score!
+    @game = Game.find(params[:id]).scored
   end
 
   def create
-    @game = Game.with_random_word.create!(game_params)
+    @game = Game.with_random_word(length: length_param).create!(game_params)
     redirect_to @game
   end
 
   def game_params
     params.fetch(:game) { ActionController::Parameters.new }.permit(:word, :attempt_limit)
+  end
+
+  def global_params
+    params.permit(:length)
+  end
+
+  def length_param
+    global_params.fetch(:length, 5).to_i
   end
 end

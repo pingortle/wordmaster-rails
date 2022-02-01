@@ -10,6 +10,10 @@ def score_to_css(score)
 end
 %>
 
+<%= link_to "Games", games_path %>
+
+<br>
+
 <% @game.attempts.each do |attempt| %>
   <% attempt.letters.each do |letter| %>
     <input type=text value="<%= letter.value %>" style="background-color: <%= score_to_css(letter.score) %>" autocomplete=nope size=1 maxlength=1 minlength=1 disabled>
@@ -17,16 +21,18 @@ end
   <br>
 <% end %>
 
-<%= form_with model: [@game, @game.current_attempt] do |form| %>
-  <%= form.fields_for :letters do |letters_fields| %>
-    <%= letters_fields.text_field :value, autocomplete: "off", size: 1, maxlength: 1, minlength: 1, required: true %>
+<% if @game.incomplete? %>
+  <%= form_with model: [@game, @game.current_attempt], data: { controller: "auto-advance"} do |form| %>
+    <%= form.fields_for :letters do |letters_fields| %>
+      <%= letters_fields.text_field :value, autocomplete: "off", size: 1, maxlength: 1, minlength: 1, required: true, autofocus: letters_fields.object == form.object.letters.first, data: { action: "keyup->auto-advance#keyup keydown->auto-advance#keydown"} %>
+    <% end %>
+    <%= form.submit "Guess" %>
   <% end %>
-  <%= form.submit "Guess" %>
-<% end %>
 
-<% @game.remaining_attempts.each do |attempt| %>
-  <% attempt.letters.each do %>
-    <input type=text autocomplete=nope size=1 maxlength=1 minlength=1 disabled>
+  <% @game.remaining_attempts.each do |attempt| %>
+    <% attempt.letters.each do %>
+      <input type=text autocomplete=nope size=1 maxlength=1 minlength=1 disabled>
+    <% end %>
+    <br>
   <% end %>
-  <br>
 <% end %>

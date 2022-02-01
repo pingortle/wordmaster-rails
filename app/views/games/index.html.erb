@@ -13,6 +13,7 @@
 <% end %>
 
 <%= button_to "Surprise Me", action: :create %>
+<%= button_to "Surprise Me (3 letter word)", action: :create, params: { length: 3 } %>
 
 <ol>
   <% @games.each do |game| %>
