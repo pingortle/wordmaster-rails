@@ -2,8 +2,8 @@
 def score_to_css(score)
   guess_to_css = {
     correct: "lightgreen",
-    correct_with_incorrect_location: "lightyellow",
-    incorrect: "revert",
+    present: "lightyellow",
+    absent: "revert",
     unknown: "purple"
   }.with_indifferent_access
   guess_to_css.fetch(score) { "red" }

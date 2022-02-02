@@ -51,12 +51,12 @@ class Attempt < ApplicationRecord
     letters.filter(&:unknown?).each do |candidate|
       word.each_char.with_index do |answer, index|
         if candidate.value == answer && !letters.map(&:correct_index).include?(index)
-          candidate.correct_with_incorrect_location!(index: index)
+          candidate.present_for!(index: index)
         end
       end
     end
 
-    letters.filter(&:unknown?).each(&:incorrect!)
+    letters.filter(&:unknown?).each(&:absent!)
   end
 
   class Letter
@@ -77,13 +77,13 @@ class Attempt < ApplicationRecord
       self.correct_index = index
     end
 
-    def correct_with_incorrect_location!(index:)
-      self.score = :correct_with_incorrect_location
+    def present_for!(index:)
+      self.score = :present
       self.correct_index = index
     end
 
-    def incorrect!
-      self.score = :incorrect
+    def absent!
+      self.score = :absent
     end
 
     def unknown?
